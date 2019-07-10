@@ -72,7 +72,7 @@ if __name__ == "__main__":
             if binary_pred(drink_name):
                 print('{} : {}RWF'.format(drink_name, drink_price))
                 total_price += drink_price
-                key = input('続けて商品をスキャンする場合は「y + Enter」,会計する場合は「Enter」を押して下さい')
+                key = input('Press "y + Enter" to scan products continuously, or "Enter" to check')
 
                 if key != 'y':
                     print("合計:{}円".format(total_price))
