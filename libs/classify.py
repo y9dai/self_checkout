@@ -5,11 +5,8 @@ from PIL import Image
 
 img_path = 'tmp/data.jpg'
 
-def categorical_pred():
-    # モデル+重みを読込み
-    self_model = load_model('models/MobileNetV2_shape224.h5')
-
-    label = ['ayataka', 'cocacola', 'craft_boss_black', 'energy_peaker', 'irohas']
+def categorical_pred(categorical_model):
+    label = ['ayataka', 'cocacola', 'craft_boss_black', 'energy_peaker', 'ilohas']
     money = [110, 120, 130, 140, 150]
 
     img = Image.open(img_path)
@@ -19,18 +16,15 @@ def categorical_pred():
     img_array = img_array.reshape((1,224,224,3))
 
     # predict
-    img_pred = self_model.predict(img_array)
+    img_pred = categorical_model.predict(img_array)
     drink_index = np.argmax(img_pred)
     drink_name = label[drink_index]
     drink_price = money[drink_index]
 
     return drink_name, drink_price
 
-def binary_pred(drink_name):
+def binary_pred(binary_model):
     result = False
-    # モデル+重みを読込み
-    self_model = load_model(drink_name + '.h5')
-
 
     img = Image.open(img_path)
     img = img.resize((224, 224))
@@ -39,7 +33,8 @@ def binary_pred(drink_name):
     img_array = img_array.reshape((1,224,224,3))
 
     # predict
-    img_pred = self_model.predict(img_array)
+    print(binary_model.predict(img_array))
+    img_pred = np.argmax(binary_model.predict(img_array))
 
     if img_pred == 0:
       result = True

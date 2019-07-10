@@ -3,11 +3,13 @@ import cv2
 import numpy as np
 import sys
 import os
+from keras.models import load_model
 # ライブラリまでのディレクトリ定義
 sys.path.append('./libs')
 from init_camera import init_camera, get_image
 from detect import detect
 from classify import categorical_pred, binary_pred
+
 
 total_price = 0
 bottle_count = 0
@@ -16,6 +18,12 @@ desc_text = 'Please place the bottle in the blue box.'
 scan_text = 'scaning...'
 push_text = 'Please press the Enter-key.'
 img_path = 'tmp/data.jpg'
+categorical_model = load_model('models/MobileNetV2_shape224.h5')
+binary_models = {'ayataka' : load_model('models/ayataka.h5'),
+                'cocacola' : load_model('models/cocacola.h5'),
+                'craft_boss_black' : load_model('models/craft_boss_black.h5'),
+                'energy_peaker' : load_model('models/energy_peaker.h5'),
+                'ilohas' : load_model('models/ilohas.h5')}
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--video", help="number of video device", default=0)
@@ -57,6 +65,18 @@ if __name__ == "__main__":
                 cv2.imshow("detections", frame)
                 if cv2.waitKey(1) & 0xFF == 13:
                     cv2.imwrite(img_path, dst)
+                    drink_name, drink_price = categorical_pred(categorical_model)
+
+                    if binary_pred(binary_models[drink_name]):
+                        print('{} : {}RWF'.format(drink_name, drink_price))
+                        total_price += drink_price
+                        key = input('Press "y + Enter" to scan products continuously, or "Enter" to check')
+
+                        if key != 'y':
+                            print("合計:{}円".format(total_price))
+                            total_price = 0
+
+                    os.remove(img_path)
 
         else:
             font = cv2.FONT_HERSHEY_SIMPLEX
@@ -65,21 +85,6 @@ if __name__ == "__main__":
             weight = 2
             cv2.putText(frame, desc_text, (10, 30), font, size, color, weight)
             cv2.imshow("detections", frame)
-
-        if os.path.exists(img_path):
-            drink_name, drink_price = categorical_pred()
-
-            if binary_pred(drink_name):
-                print('{} : {}RWF'.format(drink_name, drink_price))
-                total_price += drink_price
-                key = input('Press "y + Enter" to scan products continuously, or "Enter" to check')
-
-                if key != 'y':
-                    print("合計:{}円".format(total_price))
-                    total_price = 0
-
-            os.remove(img_path)
-
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
