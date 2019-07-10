@@ -2,18 +2,20 @@ import argparse
 import cv2
 import numpy as np
 import sys
+import os
 # ライブラリまでのディレクトリ定義
 sys.path.append('./libs')
 from init_camera import init_camera, get_image
 from detect import detect
+from classify import categorical_pred, binary_pred
 
-
-bottle_str = 'bottle'
+total_price = 0
 bottle_count = 0
-img_path = 'tmp/data.jpg'
+bottle_str = 'bottle'
 desc_text = 'Please place the bottle in the blue box.'
 scan_text = 'scaning...'
 push_text = 'Please press the Enter-key.'
+img_path = 'tmp/data.jpg'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--video", help="number of video device", default=0)
@@ -63,6 +65,20 @@ if __name__ == "__main__":
             weight = 2
             cv2.putText(frame, desc_text, (10, 30), font, size, color, weight)
             cv2.imshow("detections", frame)
+
+        if os.path.exists(img_path):
+            drink_name, drink_price = categorical_pred()
+
+            if binary_pred(drink_name):
+                print('{} : {}RWF'.format(drink_name, drink_price))
+                total_price += drink_price
+                key = input('続けて商品をスキャンする場合は「y + Enter」,会計する場合は「Enter」を押して下さい')
+
+                if key != 'y':
+                    print("合計:{}円".format(total_price))
+                    total_price = 0
+
+            os.remove(img_path)
 
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
