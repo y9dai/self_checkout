@@ -47,48 +47,49 @@ while True:
     total_price = 0
     print('welcome!')
     key = input('Please press "Enter" to scan the product.')
-        while True:
-            frame = get_image(cap, picam_flg)
-            dst = frame[55:695, 545:795]
-            cv2.rectangle(frame, (550, 50), (800, 700), (255, 0, 0))
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            class_name = detect(rgb_frame, class_names, args.prototxt, args.caffemodel)
+    while True:
+        frame = get_image(cap, picam_flg)
+        dst = frame[55:695, 545:795]
+        cv2.rectangle(frame, (550, 50), (800, 700), (255, 0, 0))
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            if bottle_str in class_name:
-                if auto_flg:
-                    bottle_count += 1
-                    cv2.putText(frame, scan_text, (10, 30), font, size, color, weight)
-                    cv2.imshow("detections", frame)
-                    if bottle_count >= 30:
-                        bottle_count = 0
-                        cv2.imwrite(img_path, dst)
-                else:
-                    cv2.putText(frame, push_text, (10, 30), font, size, color, weight)
-                    cv2.imshow("detections", frame)
-                    if cv2.waitKey(1) & 0xFF == 13:
-                        cv2.imwrite(img_path, dst)
-                        drink_name, drink_price = categorical_pred(categorical_model)
+        class_name = detect(rgb_frame, class_names, args.prototxt, args.caffemodel)
 
-                        if binary_pred(binary_models[drink_name]):
-                            print('{} : {}RWF'.format(drink_name, drink_price))
-                            total_price += drink_price
-                            key = input('Press "y + Enter" to scan products continuously, or "Enter" to check')
-
-                            if key != 'y':
-                                print("合計:{}円".format(total_price))
-
-                                break
-
-                        os.remove(img_path)
-
-            else:
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                size = 1
-                color = (255,255,255)
-                weight = 2
-                cv2.putText(frame, desc_text, (10, 30), font, size, color, weight)
+        if bottle_str in class_name:
+            if auto_flg:
+                bottle_count += 1
+                cv2.putText(frame, scan_text, (10, 30), font, size, color, weight)
                 cv2.imshow("detections", frame)
+                if bottle_count >= 30:
+                    bottle_count = 0
+                    cv2.imwrite(img_path, dst)
+            else:
+                cv2.putText(frame, push_text, (10, 30), font, size, color, weight)
+                cv2.imshow("detections", frame)
+                if cv2.waitKey(1) & 0xFF == 13:
+                    cv2.imwrite(img_path, dst)
+                    drink_name, drink_price = categorical_pred(categorical_model)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+                    if binary_pred(binary_models[drink_name]):
+                        print('{} : {}RWF'.format(drink_name, drink_price))
+                        total_price += drink_price
+                        key = input('Press "y + Enter" to scan products continuously, or "Enter" to check')
+
+                        if key != 'y':
+                            print("合計:{}円".format(total_price))
+
+                            break
+
+                    os.remove(img_path)
+
+        else:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            size = 1
+            color = (255,255,255)
+            weight = 2
+            cv2.putText(frame, desc_text, (10, 30), font, size, color, weight)
+            cv2.imshow("detections", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
