@@ -26,7 +26,7 @@ def categorical_pred(categorical_model):
 
 
 def binary_pred(binary_model):
-    result = False
+    result = True
 
     if not binary_model is None:
         img = Image.open(img_path)
@@ -38,8 +38,8 @@ def binary_pred(binary_model):
         # predict
         img_pred = np.argmax(binary_model.predict(img_array))
 
-        if img_pred == 0:
-          result = True
+        if img_pred != 0:
+          result = False
 
     return result
 

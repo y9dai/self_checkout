@@ -40,13 +40,13 @@ cap = init_camera(raspi_flg)
 
 
 if raspi_flg:
-    categorical_model = load_model('models/MobileNetV2_shape224_six_classes.h5')
-    top_index = 45
-    bottom_index = 595
+    categorical_model = load_model('models/MobileNetV2_shape224.h5')
+    top_index = 35
+    bottom_index = 545
     left_index = 205
     right_index = 435
-    top_left_coord = (200, 40)
-    bottom_right_coord = (440, 600)
+    top_left_coord = (200, 30)
+    bottom_right_coord = (440, 550)
 
 
 else:
@@ -68,6 +68,7 @@ else:
 if __name__ == "__main__":
     while True:
         total_price = 0
+         = time.time()
         print('\n...\n')
         print('welcome!\n')
         key = input('Please press "Enter" to scan the product.\n')
@@ -94,7 +95,7 @@ if __name__ == "__main__":
                     drink_name, drink_price = categorical_pred(categorical_model)
                     binary_model = None if raspi_flg else binary_models[drink_name]
 
-                    if not binary_pred(binary_model) or drink_name == 'unknown':
+                    if binary_pred(binary_model) == False or drink_name == 'unknown':
                         print('unknown item was placed.')
                         os.remove(img_path)
                         continue
