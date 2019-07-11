@@ -1,5 +1,6 @@
 import cv2
 
+
 def init_camera(raspi_flg = True):
     cap = None
     res = False

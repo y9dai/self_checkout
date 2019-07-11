@@ -1,8 +1,9 @@
 import argparse
 import cv2
 import numpy as np
-import sys
 import os
+import sys
+import time
 from keras.models import load_model
 # ライブラリまでのディレクトリ定義
 sys.path.append('./libs')
@@ -14,7 +15,7 @@ from classify import categorical_pred, binary_pred
 bottle_str = 'bottle'
 desc_text = 'Please place the bottle in the blue box.'
 push_text = 'Please press "Enter"'
-scan_text = 'scaning...'
+scan_text = 'Scaning...'
 img_path = 'tmp/data.jpg'
 font = cv2.FONT_HERSHEY_SIMPLEX
 size = 1
@@ -88,19 +89,27 @@ if __name__ == "__main__":
 
                 # エンターキー押下時
                 if cv2.waitKey(1) & 0xFF == 13:
+                    t1 = time.time()
                     cv2.imwrite(img_path, dst)
                     drink_name, drink_price = categorical_pred(categorical_model)
+                    binary_model = None if raspi_flg else binary_models[drink_name]
 
-                    if binary_pred(binary_models[drink_name]):
-                        print('{} : {} RWF'.format(drink_name, drink_price))
-                        total_price += drink_price
+                    if not binary_pred(binary_model) or drink_name == 'unknown':
+                        print('unknown item was placed.')
+                        os.remove(img_path)
+                        continue
 
-                        key = input('Press "y + Enter" to scan products continuously, or "Enter" to check\n')
+                    print('{} : {} F\n'.format(drink_name, drink_price))
+                    t2 = time.time()
+                    elapsed_time = t2 - t1
+                    print("elapsed_time：{} s\n".format(elapsed_time))
+                    total_price += drink_price
 
-                        if key != 'y':
-                            print("amount :{} RWF\n".format(total_price))
+                    key = input('Press "y + Enter" to scan products continuously, or "Enter" to check\n')
 
-                            break
+                    if key != 'y':
+                        print("Total amount :{} F\n".format(total_price))
+                        break
 
                     os.remove(img_path)
 
