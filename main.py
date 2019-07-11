@@ -97,7 +97,8 @@ if __name__ == "__main__":
                     binary_model = None if raspi_flg else binary_models[drink_name]
 
                     if binary_pred(binary_model) == False or drink_name == 'unknown':
-                        print('unknown item was placed.')
+                        print('Unknown item was placed.\n')
+                        print('Please place the item correctly and press Enter again.\n')
                         unknown_count += 1
                         os.remove(img_path)
                         #3回以上detectできなかったら会計せずに店員を呼ぶ
