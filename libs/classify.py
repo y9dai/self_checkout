@@ -9,6 +9,7 @@ img_path = 'tmp/data.jpg'
 def categorical_pred(categorical_model):
     label = ['ayataka', 'cocacola', 'craft_boss_black', 'energy_peaker', 'ilohas', 'unknown']
     money = [1680, 1250, 1800, 2080, 1460, 0]
+    threshold = 0.8 #threshold以下のものは全てunknownにする
 
     img = Image.open(img_path)
     img = img.resize((224, 224))
@@ -17,8 +18,18 @@ def categorical_pred(categorical_model):
     img_array = img_array.reshape((1,224,224,3))
 
     # predict
-    img_pred = categorical_model.predict(img_array)
-    drink_index = np.argmax(img_pred)
+    img_proba = categorical_model.predict(img_array)
+    print(img_proba)
+    drink_index = np.argmax(img_proba)
+
+    #unknownだったらそのまま返す
+    if (drink_index == 5):
+        pass
+
+    #unknown以外だったら、閾値で判定してunknownにするか、そのまま返すかする
+    else:
+        if (img_proba[0][drink_index] < threshold):
+            drink_index = 5 #unknown(5)に設定
     drink_name = label[drink_index]
     drink_price = money[drink_index]
 

@@ -40,7 +40,7 @@ cap = init_camera(raspi_flg)
 
 
 if raspi_flg:
-    categorical_model = load_model('models/MobileNetV2_shape224.h5')
+    categorical_model = load_model('models/MobileNetV2_shape224_six_classes.h5')
     top_index = 35
     bottom_index = 545
     left_index = 205
@@ -68,10 +68,11 @@ else:
 if __name__ == "__main__":
     while True:
         total_price = 0
-         = time.time()
+
         print('\n...\n')
         print('welcome!\n')
         key = input('Please press "Enter" to scan the product.\n')
+        unknown_count = 0
 
         while True:
             frame = get_image(cap, raspi_flg)
@@ -97,7 +98,12 @@ if __name__ == "__main__":
 
                     if binary_pred(binary_model) == False or drink_name == 'unknown':
                         print('unknown item was placed.')
+                        unknown_count += 1
                         os.remove(img_path)
+                        #3回以上detectできなかったら会計せずに店員を呼ぶ
+                        if (unknown_count >=3 ):
+                            print("Please ask shop clerk.")
+                            break
                         continue
 
                     print('{} : {} F\n'.format(drink_name, drink_price))
