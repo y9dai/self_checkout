@@ -3,15 +3,20 @@
 ## Overview
 
 When you take the entire picture of a plastic bottle, it outputs its name and price.
+
 This program is designed to work with raspberry pi 3 model B + or Mac OS.
 
 ---
 ## How to use
 ### Command
 * Run main.py
+
 $python3 main.py
+
 * for Mac users, Run main.py with --raspi False
+
 $python3 main.py --raspi False
+
 
 ### Dependencies
 
