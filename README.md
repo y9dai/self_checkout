@@ -11,11 +11,11 @@ This program is designed to work with raspberry pi 3 model B + or Mac OS.
 ### Command
 * Run main.py
 
-$python3 main.py
+e.g.) $python3 main.py
 
 * for Mac users, Run main.py with --raspi False
 
-$python3 main.py --raspi False
+e.g.) $python3 main.py --raspi False
 
 
 ### Dependencies
