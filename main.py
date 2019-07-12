@@ -55,7 +55,8 @@ else:
                     'cocacola' : load_model('models/cocacola.h5'),
                     'craft_boss_black' : load_model('models/craft_boss_black.h5'),
                     'energy_peaker' : load_model('models/energy_peaker.h5'),
-                    'ilohas' : load_model('models/ilohas.h5')}
+                    'ilohas' : load_model('models/ilohas.h5'),
+                    'unknown' : None}
     top_index = 55
     bottom_index = 695
     left_index = 555
